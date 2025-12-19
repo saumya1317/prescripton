@@ -1,12 +1,15 @@
 import { createContext } from "react";
-import { doctors } from "../assets/assets_frontend/assets"; // <--- Updated path for your folder
+import { doctors } from "../assets/assets_frontend/assets"; // <--- Ensure this path is correct
 
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
 
+    const currencySymbol = '$' // <--- Add this line
+
     const value = {
-        doctors
+        doctors,
+        currencySymbol // <--- Add this line
     }
 
     return (
