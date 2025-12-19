@@ -1,85 +1,125 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
+// Ensure upload_icon is imported here!
+import { assets } from '../assets/assets_frontend/assets' 
 
-const Myprofile = () => {
-  const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, City, State 12345"
-  });
+const MyProfile = () => {
 
-  const handleChange = (e) => {
-    setProfile({
-      ...profile,
-      [e.target.name]: e.target.value
-    });
-  };
+    const [userData, setUserData] = useState({
+        name: "Edward Vincent",
+        image: assets.profile_pic,
+        email: 'richardjameswap@gmail.com',
+        phone: '+1 123 456 7890',
+        address: {
+            line1: "57th Cross, Richmond",
+            line2: "Circle, Church Road, London"
+        },
+        gender: 'Male',
+        dob: '2000-01-20'
+    })
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Save profile logic would go here
-    console.log('Profile updated:', profile);
-  };
+    const [isEdit, setIsEdit] = useState(false)
+    // New state to hold the selected image file
+    const [image, setImage] = useState(false)
 
-  return (
-    <div className="py-8">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6">My Profile</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Full Name</label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={profile.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={profile.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={profile.phone}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
-          <div className="mb-6">
-            <label htmlFor="address" className="block text-gray-700 font-medium mb-2">Address</label>
-            <textarea
-              id="address"
-              name="address"
-              value={profile.address}
-              onChange={handleChange}
-              rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            Save Changes
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-};
+    return (
+        <div className='max-w-lg flex flex-col gap-2 text-sm'>
 
-export default Myprofile;
+            {/* --- Profile Image Section (Updated) --- */}
+            {
+                isEdit
+                ? // Edit Mode: Clickable label with upload icon
+                <label htmlFor="image">
+                    <div className='inline-block relative cursor-pointer'>
+                        {/* Preview logic: If new image selected, show blob URL, else show existing image */}
+                        <img className='w-36 rounded opacity-75' src={image ? URL.createObjectURL(image) : userData.image} alt="" />
+                        {/* Upload icon overlay */}
+                        {/* Make sure you have upload_icon in your assets! */}
+                        <img className='w-10 absolute bottom-12 right-12' src={assets.upload_icon} alt="" />
+                    </div>
+                    {/* Hidden file input */}
+                    <input onChange={(e)=>setImage(e.target.files[0])} type="file" id="image" hidden/>
+                </label>
+                : // View Mode: Static image
+                <img className='w-36 rounded' src={userData.image} alt="" />
+            }
+            
+
+            {/* --- Name Section --- */}
+            {
+                isEdit
+                ? <input className='bg-gray-50 text-3xl font-medium max-w-60 mt-4' type="text" value={userData.name} onChange={e => setUserData(prev => ({...prev, name:e.target.value}))} />
+                : <p className='font-medium text-3xl text-neutral-800 mt-4'>{userData.name}</p>
+            }
+
+            <hr className='bg-zinc-400 h-[1px] border-none' />
+
+            {/* --- Contact Info Section --- */}
+            <div>
+                <p className='text-neutral-500 underline mt-3'>CONTACT INFORMATION</p>
+                <div className='grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700'>
+                    
+                    <p className='font-medium'>Email id:</p>
+                    <p className='text-blue-500'>{userData.email}</p>
+
+                    <p className='font-medium'>Phone:</p>
+                    {
+                        isEdit 
+                        ? <input className='bg-gray-100 max-w-52' type="text" value={userData.phone} onChange={e => setUserData(prev => ({...prev, phone:e.target.value}))} />
+                        : <p className='text-blue-400'>{userData.phone}</p>
+                    }
+
+                    <p className='font-medium'>Address:</p>
+                    {
+                        isEdit
+                        ? <p>
+                            <input className='bg-gray-50' onChange={(e) => setUserData(prev => ({ ...prev, address: { ...prev.address, line1: e.target.value } }))} value={userData.address.line1} type="text" />
+                            <br />
+                            <input className='bg-gray-50' onChange={(e) => setUserData(prev => ({ ...prev, address: { ...prev.address, line2: e.target.value } }))} value={userData.address.line2} type="text" />
+                        </p>
+                        : <p className='text-gray-500'>
+                            {userData.address.line1} 
+                            <br /> 
+                            {userData.address.line2}
+                        </p>
+                    }
+                </div>
+            </div>
+
+            {/* --- Basic Info Section --- */}
+            <div>
+                <p className='text-neutral-500 underline mt-3'>BASIC INFORMATION</p>
+                <div className='grid grid-cols-[1fr_3fr] gap-y-2.5 mt-3 text-neutral-700'>
+                    <p className='font-medium'>Gender:</p>
+                    {
+                        isEdit
+                        ? <select className='max-w-20 bg-gray-100' onChange={(e) => setUserData(prev => ({ ...prev, gender: e.target.value }))} value={userData.gender}>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        : <p className='text-gray-400'>{userData.gender}</p>
+                    }
+
+                    <p className='font-medium'>Birthday:</p>
+                    {
+                        isEdit
+                        ? <input className='max-w-28 bg-gray-100' type="date" onChange={(e) => setUserData(prev => ({ ...prev, dob: e.target.value }))} value={userData.dob} />
+                        : <p className='text-gray-400'>{userData.dob}</p>
+                    }
+                </div>
+            </div>
+
+            {/* --- Buttons --- */}
+            <div className='mt-10'>
+                {
+                    isEdit
+                    // When saving, we would handle image upload to backend here later
+                    ? <button className='border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all' onClick={()=>setIsEdit(false)}>Save information</button>
+                    : <button className='border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all' onClick={()=>setIsEdit(true)}>Edit</button>
+                }
+            </div>
+
+        </div>
+    )
+}
+
+export default MyProfile
