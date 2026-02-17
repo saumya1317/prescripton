@@ -1,21 +1,36 @@
 import React, { useContext } from 'react'
-import { assets } from '../assets/assets_admin/assets.js' // <--- Use your correct path
+import { assets } from '../assets/assets_admin/assets.js'
 import { AdminContext } from '../context/AdminContext'
+import { DoctorContext } from '../context/DoctorContext' //
+import { useNavigate } from 'react-router-dom' //
 
 const Navbar = () => {
 
     const { aToken, setAToken } = useContext(AdminContext)
+    const { dToken, setDToken } = useContext(DoctorContext) //
+
+    const navigate = useNavigate() //
 
     const logout = () => {
-        // 1. Clear the state
-        aToken && setAToken('')
-        // 2. Clear local storage
-        aToken && localStorage.removeItem('aToken')
+        // Handle Admin Logout
+        if (aToken) {
+            setAToken('')
+            localStorage.removeItem('aToken')
+        }
+        
+        // Handle Doctor Logout
+        if (dToken) {
+            setDToken('')
+            localStorage.removeItem('dToken')
+        }
+
+        navigate('/') // Redirect to login page after logout
     }
 
     return (
         <div className='flex justify-between items-center px-4 sm:px-10 py-3 border-b bg-white'>
             <div className='flex items-center gap-2 text-xs'>
+                {/* Logic to show correct logo or label based on user type */}
                 <img className='w-36 sm:w-40 cursor-pointer' src={assets.admin_logo} alt="" />
                 <p className='border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600'>
                     {aToken ? 'Admin' : 'Doctor'}

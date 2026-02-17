@@ -1,8 +1,9 @@
 import React, { useContext, useState } from 'react'
-import { assets } from '../assets/assets_admin/assets.js' // Check your path!
+import { assets } from '../assets/assets_admin/assets.js' 
 import { AdminContext } from '../context/AdminContext'
-import axios from 'axios'  // <--- Import Axios
-import { toast } from 'react-toastify' // <--- Import Toast for alerts
+import { DoctorContext } from '../context/DoctorContext' //
+import axios from 'axios' 
+import { toast } from 'react-toastify' 
 
 const Login = () => {
 
@@ -11,38 +12,44 @@ const Login = () => {
     const [password, setPassword] = useState('')
 
     const { setAToken, backendUrl } = useContext(AdminContext)
+    const { setDToken } = useContext(DoctorContext) //
 
     const onSubmitHandler = async (event) => {
         event.preventDefault()
 
         try {
-
             if (state === 'Admin') {
                 
                 const { data } = await axios.post(backendUrl + '/api/admin/login', { email, password })
                 
                 if (data.success) {
-                    localStorage.setItem('aToken', data.token)
-                    //console.log(data.token) // Optional: Check token in console
-                    setAToken(data.token)   // Save token in context
-                    localStorage.setItem('aToken', data.token) // Save token in local storage
+                    localStorage.setItem('aToken', data.token) //
+                    setAToken(data.token)   
                 } else {
-                    toast.error(data.message) // Show error alert
+                    toast.error(data.message) 
                 }
 
             } else {
-                // Doctor login logic will go here later
+                
+                // Doctor Login Logic
+                const { data } = await axios.post(backendUrl + '/api/doctor/login', { email, password })
+                
+                if (data.success) {
+                    localStorage.setItem('dToken', data.token) //
+                    setDToken(data.token) //
+                } else {
+                    toast.error(data.message)
+                }
+
             }
 
         } catch (error) {
-            console.log(error)
             toast.error(error.message)
         }
     }
 
     return (
         <form onSubmit={onSubmitHandler} className='min-h-[80vh] flex items-center'>
-            {/* ... (rest of your form code remains the same) ... */}
             <div className='flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 border rounded-xl text-[#5E5E5E] text-sm shadow-lg'>
                 
                 <p className='text-2xl font-semibold m-auto'>
@@ -59,7 +66,7 @@ const Login = () => {
                     <input onChange={(e) => setPassword(e.target.value)} value={password} className='border border-[#DADADA] rounded w-full p-2 mt-1' type="password" required />
                 </div>
                 
-                <button className='bg-primary text-white w-full py-2 rounded-md text-base'>Login</button>
+                <button className='bg-primary text-white w-full py-2 rounded-md text-base mt-1'>Login</button>
                 
                 {
                     state === 'Admin'
