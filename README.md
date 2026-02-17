@@ -80,8 +80,8 @@ VITE_RAZORPAY_KEY_ID=your_id
 
 ## 🚀 Live Demo
 
-- **Frontend (Patients)**: [Your Vercel Link]
-- **Admin/Doctor Panel**: [Your Admin Vercel Link]
+- **Frontend (Patients)**:https://prescripton.onrender.com/
+- **Admin/Doctor Panel**: https://prescriptonadminis.onrender.com/
 - **Backend API**: https://prescriptonmanage.onrender.com
 
 ## 🛠️ Tech Stack
