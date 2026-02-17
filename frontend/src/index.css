@@ -1,0 +1,26 @@
+/* 1. Import the "Outfit" font from Google */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Apply the font to the whole website */
+* {
+    font-family: Outfit;
+}
+
+/* 3. Your Navbar underline logic */
+.active hr {
+    @apply block;
+}
+
+/* 4. Hide the scrollbar (makes the horizontal scroll look cleaner) */
+::-webkit-scrollbar {
+    display: none;
+}
+@media (max-width:740px){
+.active p{
+    @apply text-white bg-primary
+}
+}
