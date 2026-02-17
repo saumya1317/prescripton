@@ -1,6 +1,6 @@
 import express from 'express'
 // 👇 Update this line to include 'bookAppointment'
-import { registerUser, loginUser, getProfile, updateProfile, bookAppointment,listAppointment,cancelAppointment,paymentRazorpay,verifyRazorpay } from '../controllers/userControlers.js'
+import { registerUser, loginUser, getProfile, updateProfile, bookAppointment,listAppointment,cancelAppointment,paymentRazorpay,verifyRazorpay } from '../controllers/userControllers.js'
 import upload from '../middleware/multer.js'
 import authUser from '../middleware/authUser.js'
 import userModel from '../models/userModel.js'
