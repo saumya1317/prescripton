@@ -4,15 +4,106 @@ Prescripto is a high-performance, production-ready doctor appointment booking pl
 
 ## 🏗️ System Architecture
 
+### System Overview
+```text
+                           ┌─────────────────────┐
+                           │      Client App     │
+                           │  React + Vite UI    │
+                           └──────────┬──────────┘
+                                      │
+                                      │ HTTP API
+                                      ▼
+                         ┌────────────────────────┐
+                         │      API Gateway       │
+                         │     Express Router     │
+                         └──────────┬─────────────┘
+                                    │
+        ┌───────────────────────────┼───────────────────────────┐
+        │                           │                           │
+        ▼                           ▼                           ▼
+┌───────────────┐          ┌─────────────────┐         ┌────────────────┐
+│ Auth Service  │          │ Booking Service │         │ Payment Service │
+│               │          │                 │         │                │
+│ JWT Auth      │          │ Appointment     │         │ Razorpay       │
+│ Login/Register│          │ Scheduling      │         │ Integration    │
+│ Role Control  │          │ Availability    │         │ Transactions   │
+└───────┬───────┘          └────────┬────────┘         └────────┬───────┘
+        │                           │                           │
+        │                           │                           │
+        ▼                           ▼                           ▼
+                   ┌─────────────────────────────────┐
+                   │           Redis Cache           │
+                   │ Doctor Profiles & Availability  │
+                   └───────────────┬─────────────────┘
+                                   │
+                                   ▼
+                          ┌─────────────────┐
+                          │     MongoDB     │
+                          │  Appointments   │
+                          │  Users/Doctors  │
+                          └─────────────────┘
+
+                                   │
+                                   │ Event Queue
+                                   ▼
+
+                         ┌─────────────────────────┐
+                         │        BullMQ Queue     │
+                         │  Background Job System  │
+                         └─────────────┬───────────┘
+                                       │
+                                       ▼
+                         ┌─────────────────────────┐
+                         │   Notification Worker   │
+                         │  Email / Reminder Jobs  │
+                         └─────────────────────────┘
+
+### Infrastructure Layer
+```text
+                ┌──────────────────────────┐
+                │       Docker Compose     │
+                │ Container Orchestration  │
+                └───────────┬──────────────┘
+                            │
+       ┌──────────────┬──────────────┬──────────────┐
+       ▼              ▼              ▼              ▼
+  Auth Service   Booking Service   Payment      Notification
+   Container       Container        Service        Worker
+                                     Container      Container
+
+       ┌──────────────┬──────────────┐
+       ▼              ▼
+     MongoDB         Redis
+     Container      Container
+```
+
+### Observability Layer
+```text
+                 ┌─────────────────────────┐
+                 │        Winston Logs     │
+                 │ Centralized Logging     │
+                 └───────────┬─────────────┘
+                             │
+                             ▼
+                 ┌─────────────────────────┐
+                 │         Sentry          │
+                 │ Error Tracking System   │
+                 └─────────────────────────┘
+```
+
+### Load Testing Layer
+```text
+                 ┌─────────────────────────┐
+                 │           k6            │
+                 │ Load Testing Framework  │
+                 │ Simulates 100+ users    │
+                 └─────────────┬───────────┘
+                               │
+                               ▼
+                        Booking API
+```
+
 The system is split into independent microservices to ensure fault isolation and independent scaling:
-
-- **Auth Service**: Centralized JWT-based authentication for Patients, Doctors, and Admins.
-- **Booking Service**: Core business logic for appointment scheduling with **Redis Caching** and **Mongoose Transactions**.
-- **Payment Service**: Decoupled integration with **Razorpay** for secure transactions.
-- **Notification Service**: Asynchronous worker processing email alerts using **BullMQ** and **Redis**.
-- **Shared Library**: Unified config, middleware, and logging across all services.
-
-![Architecture Diagram](https://raw.githubusercontent.com/saumya1317/prescrioto/main/architecture_diagram.png) *(Note: Add your diagram here)*
 
 ## 🚀 Key Technical Features
 
