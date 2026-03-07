@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    ports:
+      - "4001:4001"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/prescripto
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=4001
+    depends_on:
+      - mongodb
+
+  booking-service:
+    build:
+      context: .
+      dockerfile: services/booking/Dockerfile
+    ports:
+      - "4002:4002"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/prescripto
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=4002
+    depends_on:
+      - mongodb
+      - redis
+
+  payment-service:
+    build:
+      context: .
+      dockerfile: services/payment/Dockerfile
+    ports:
+      - "4003:4003"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/prescripto
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET}
+      - PORT=4003
+    depends_on:
+      - mongodb
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: services/notification/Dockerfile
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    depends_on:
+      - redis
+
+volumes:
+  mongodb_data:
